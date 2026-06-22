@@ -6,7 +6,7 @@ class GameScene extends Phaser.Scene
     {
         this.load.image(
             'player',
-            'images/player.png'
+            'images/agent.png'
         );
     }
     create()
@@ -55,7 +55,7 @@ this.infoText = this.add.text(
 this.titleText.setDepth(99999);
 this.infoText.setDepth(99999);
 this.player = this.add.image(WORLDSIZE/2, WORLDSIZE/2,'player');
-this.player.setScale(0.5);
+this.player.setScale(0.07);
 this.player.setDepth(1000);
 this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) =>
 {
