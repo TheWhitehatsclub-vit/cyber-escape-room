@@ -10,6 +10,7 @@ class GameScene extends Phaser.Scene
         );
     }
     create()
+    
     {
         const WORLDSIZE = 20000;
         this.cameras.main.setBounds(
@@ -17,17 +18,22 @@ class GameScene extends Phaser.Scene
     0,
     WORLDSIZE,
     WORLDSIZE
-);
+    );
+    this.scale.on('resize', (gameSize) => {
+    const width = gameSize.width;
+    const height = gameSize.height;
+    this.cameras.main.setSize(width, height);
+});
+this.add.tileSprite(400, 568, 800, 32, 'player');
 this.cameras.main.setZoom(0.05);
 this.gameStarted = false;
 const centerX = this.cameras.main.width / 2;
 const centerY = this.cameras.main.height / 2;
-
 this.menuBox = this.add.rectangle(
     centerX,
     centerY,
-    800,    // width
-    400,    // height
+    800,    
+    400, 
     0x000000
 )
 .setScrollFactor(0)
@@ -60,12 +66,13 @@ this.player.setDepth(1000);
 this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) =>
 {
     const cam = this.cameras.main;
-
     let zoom = cam.zoom;
-
     zoom -= deltaY * 0.1;
+    const minZoomX = cam.width / WORLDSIZE;
+    const minZoomY = cam.height / WORLDSIZE;
+    const minZoom = Math.max(minZoomX, minZoomY);
 
-    zoom = Phaser.Math.Clamp(zoom, 0.05, 4);
+    zoom = Phaser.Math.Clamp(zoom, minZoom, 4);
 
     cam.zoomTo(zoom, 150);
 });
@@ -147,7 +154,8 @@ new Phaser.Game({
     width: window.innerWidth,
     height: window.innerHeight,
     scale: {
-        mode: Phaser.Scale.RESIZE
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
     },
     scene: GameScene
 });
