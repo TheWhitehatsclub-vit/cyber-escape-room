@@ -3,12 +3,17 @@ import Phaser from 'phaser';
 class GameScene extends Phaser.Scene
 {
     preload()
-    {
-        this.load.image(
-            'player',
-            'images/agent.png'
-        );
-    }
+{
+    this.load.spritesheet(
+        'player',
+        'images/agent_sheet.png',
+        {
+            frameWidth: 250,
+            frameHeight: 341
+
+        }
+    );
+}
     create()
     
     {
@@ -60,9 +65,38 @@ this.infoText = this.add.text(
 ).setScrollFactor(0).setOrigin(0.5);
 this.titleText.setDepth(99999);
 this.infoText.setDepth(99999);
-this.player = this.add.image(WORLDSIZE/2, WORLDSIZE/2,'player');
-this.player.setScale(0.07);
+this.player = this.add.sprite(WORLDSIZE/2, WORLDSIZE/2,'player');
+this.player.setScale(0.2);
 this.player.setDepth(1000);
+this.anims.create({
+    key: 'walk-down',
+    frames: this.anims.generateFrameNumbers('player', {
+        start: 0,
+        end: 5
+    }),
+    frameRate: 8,
+    repeat: -1
+});
+
+this.anims.create({
+    key: 'walk-side',
+    frames: this.anims.generateFrameNumbers('player', {
+        start: 6,
+        end: 11
+    }),
+    frameRate: 8,
+    repeat: -1
+});
+
+this.anims.create({
+    key: 'walk-up',
+    frames: this.anims.generateFrameNumbers('player', {
+        start: 12,
+        end: 17
+    }),
+    frameRate: 8,
+    repeat: -1
+});
 this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) =>
 {
     const cam = this.cameras.main;
@@ -135,17 +169,44 @@ this.player.y = Phaser.Math.Clamp(
 );
         const speed = 5;
 
-        if(this.cursors.left.isDown)
-            this.player.x -= speed;
+        let moving = false;
 
-        if(this.cursors.right.isDown)
-            this.player.x += speed;
+if (this.cursors.left.isDown)
+{
+    this.player.x -= speed;
+    this.player.anims.play('walk-side', true);
+    this.player.setFlipX(true);
+    moving = true;
+}
 
-        if(this.cursors.up.isDown)
-            this.player.y -= speed;
+else if (this.cursors.right.isDown)
+{
+    this.player.x += speed;
+    this.player.anims.play('walk-side', true);
+    this.player.setFlipX(false);
+    moving = true;
+}
 
-        if(this.cursors.down.isDown)
-            this.player.y += speed;
+else if (this.cursors.up.isDown)
+{
+    this.player.y -= speed;
+    this.player.anims.play('walk-up', true);
+    this.player.setFlipX(false);
+    moving = true;
+}
+
+else if (this.cursors.down.isDown)
+{
+    this.player.y += speed;
+    this.player.anims.play('walk-down', true);
+    this.player.setFlipX(false);
+    moving = true;
+}
+
+if (!moving)
+{
+    this.player.anims.stop();
+}
     }
 }
 
